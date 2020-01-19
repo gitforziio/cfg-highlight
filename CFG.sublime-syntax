@@ -1,0 +1,187 @@
+%YAML 1.2
+---
+# http://www.sublimetext.com/docs/3/syntax.html
+name: CFG
+comment: 'Symbol pattern : [a-zA-Z+!\-_?0-9*~#@''`/.$=]'
+file_extensions: [cfg, txt]
+scope: source.CFG
+
+
+contexts:
+  main:
+    - include: comment
+    - include: bad
+    - match: ^( +)
+      scope: invalid.deprecated.CFG
+
+    - match: ^(?=(S \-\>))
+      push:
+        - match: ^(S(?:\s))
+          scope: entity.name.union.CFG
+        - include: number
+        - include: character
+        - include: bad
+        - match: ( {2,})
+          scope: invalid.deprecated.CFG
+        - match: (\-\>)
+          scope: keyword.control.arrow.CFG
+          pop: true
+
+    - match: ^(?=([^ ]+ \-\>))
+      push:
+        - match: ^(?=[^ ]+)
+          # scope: string.unquoted.CFG
+          push:
+            - include: number
+            - include: character
+            - include: punctuation
+            - match: (?=( ))
+              pop: true
+        - include: number
+        - include: character
+        - include: bad
+        - match: ( {2,})
+          scope: invalid.deprecated.CFG
+        - match: (\-\>)
+          scope: keyword.control.arrow.CFG
+          pop: true
+
+
+    - match: (?<=(\-\>))
+      push:
+        - include: number
+        - include: character
+        - include: punctuation
+        - include: bad
+        - include: comment
+        - match: ( {2,})
+          scope: invalid.deprecated.CFG
+        - match: (?=($))
+          pop: true
+
+
+
+
+    # - match: ^(?=S(?:\s))
+    #   push:
+    #     - match: ^(S(?:\s))
+    #       scope: entity.name.union.CFG
+    #     - include: number
+    #     - include: character
+    #     - include: bad
+    #     - match: (\s{2,})
+    #       scope: invalid.deprecated.CFG
+    #     - match: (\-\>)
+    #       scope: keyword.control.arrow.CFG
+    #       pop: true
+    #     - include: bad
+    #     - include: comment
+
+    # - match: (?<=\-\>)
+    #   push:
+    #     - include: bad
+    #     - include: comment
+    #     - match: ($)
+    #       pop: true
+
+
+
+
+    # - match: ^(?=[^\s\n]+(?:[\s\n]))
+    #   push:
+    #     - include: number
+    #     - include: character
+    #     - include: punctuation
+    #     - include: bad
+    #     - match: ( [^\-][^\>])
+    #       scope: invalid.deprecated.CFG
+    #     - match: (?= \-\>)
+    #       pop: true
+    #     - match: (\-\>)
+    #       scope: keyword.control.arrow.CFG
+
+
+
+    # - match: (?=[^\s\n]+(?:[\s\n]))
+    #   push:
+    #     - include: number
+    #     - include: character
+    #     - include: punctuation
+    #     - include: bad
+    #     - match: ([\s\n]|$)
+    #       pop: true
+    #     - include: bad
+    #     - include: comment
+
+
+
+        # - match: (?=\-\>)
+          # pop: true
+        # - match: (\s)
+        #   push:
+        #     - include: number
+        #     - include: character
+        #     - include: punctuation
+        #     - match: ($)
+        #       pop: true
+
+
+
+
+
+    # - include: left_unit
+    # - include: root_unit
+    # - include: normal_unit
+    # - include: normal_left
+
+
+  comment:
+    - match: ^(;).*$\n?
+      scope: comment.line.semicolon.start.CFG
+      captures:
+        1: punctuation.definition.comment.CFG
+    - match: (;).*$\n?
+      scope: comment.line.semicolon.CFG
+      captures:
+        1: punctuation.definition.comment.CFG
+
+
+
+
+
+
+
+  character:
+    - match: ([a-z]+)
+      scope: string.unquoted.CFG
+    - match: ([A-Z]+)
+      scope: variable.parameter.CFG
+    - match: (?:[ ])S(?:[ \n])
+      scope: entity.name.union.CFG
+    # - match: ([a-z][A-Z]+)
+      # scope: string.unquoted.CFG
+  number:
+    - match: ([0-9]+)
+      scope: constant.numeric.CFG
+  punctuation:
+    - match: ([\+\!\-\_\?\*\~\#\@\'\`\/\.\$\=]+)
+      scope: comment.line.punctuation.CFG
+  arrow:
+    - match: (\-\>)
+      scope: keyword.control.arrow.CFG
+
+
+
+
+
+
+
+
+
+  bad:
+    - match: ( {2,})
+      scope: invalid.deprecated.CFG
+
+
+
+
